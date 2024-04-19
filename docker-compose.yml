@@ -87,3 +87,8 @@ services:
 
 volumes:
   cintelink_db_data:
+
+networks:
+  default:
+    external: true
+    name: notification-network

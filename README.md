@@ -11,11 +11,23 @@ Desde la terminal, ejecutar el siguiente comando para copiar las variables de en
 cp env.example .env
 ```
 
+### Crear red de Docker
+```    
+docker network create notification-network
+```
+
 ### Iniciar aplicación con Docker
 Para inicializar la aplicación, ejecutar desde consola el siguiente comando
 ```
 docker compose up --build -d
 ```
+
+### Cliente Frontend
+Clonar el proyecto desde el siguiente link y seguir los pasos especificados en el mismo proyecto
+```
+https://github.com/mauribarrera23/notification-front
+```
+
 
 ### Docs
 Si en las variables de entorno tiene "IS_DEBUG" en True, podrá acceder a la documentación 
