@@ -1,7 +1,7 @@
 import uuid
 from typing import List
 
-from sqlalchemy import and_, insert, or_, select, delete, update
+from sqlalchemy import and_, insert, or_, select, delete, update, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.channel.models import notification_channel, Channel
@@ -45,7 +45,7 @@ async def get_received_notifications(db: AsyncSession, user: User) -> List[Notif
                 Notification.recipient_id == None   # noqa
             )
         )
-    )
+    ).order_by(desc(Notification.created_at))
     result = await db.execute(query)
     notifications = [row[0] for row in result.fetchall()]
     return notifications
@@ -70,4 +70,5 @@ async def update_notification(db: AsyncSession, notification_id: uuid.UUID, read
 
 
 async def delete_notification(db: AsyncSession, notification_id: uuid.UUID) -> None:
+    await db.execute(delete(notification_channel).where(notification_channel.c.notification_id == notification_id))
     await db.execute(delete(Notification).where(Notification.id == notification_id))

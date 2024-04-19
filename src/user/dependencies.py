@@ -1,10 +1,12 @@
+from typing import Annotated
+
 import jwt
 
 from fastapi import Depends
 from jwt import PyJWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.middleware.middleware import JWTBearer
+from src.middleware.middleware import JWTBearer, JWTBearerWebSocket
 from src.settings.database import get_db_session
 from src.user.exceptions import EmailExists, InvalidCredentials, InvalidToken, UsernameExists
 from src.settings.config import SECRET_KEY
@@ -23,6 +25,18 @@ async def validate_user_creation(data: UserCreate, db: AsyncSession = Depends(ge
 
 
 async def get_current_user(db: AsyncSession = Depends(get_db_session), token: str = Depends(JWTBearer())):
+    try:
+        payload = jwt.decode(token, f"{SECRET_KEY}", algorithms=["HS256"])
+        user_id = payload.get("sub")
+        user = await get_user_by_id(db=db, user_id=user_id)
+        if not user:
+            raise InvalidCredentials()
+        return user
+    except (PyJWTError, AttributeError):
+        return InvalidToken()
+
+
+async def get_websocket_current_user(db: AsyncSession = Depends(get_db_session), token: str = Depends(JWTBearerWebSocket())):
     try:
         payload = jwt.decode(token, f"{SECRET_KEY}", algorithms=["HS256"])
         user_id = payload.get("sub")
