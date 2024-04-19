@@ -29,21 +29,21 @@ async def list_channels(_: User = Depends(get_current_user), db: AsyncSession = 
     return channels
 
 
-@router.post("/subscribe", status_code=status.HTTP_200_OK)
+@router.put("/subscribe/{channel_id}", status_code=status.HTTP_200_OK)
 async def subscribe_channel(
-        channel: Channel = Depends(validate_subscription),
+        channel_id: int = Depends(validate_subscription),
         user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db_session)
 ):
-    await create_subscription(db=db, channel_id=channel.id, user_id=user.id)
-    return {"message": f"The user has subscribed to the {channel.tag} channel"}
+    await create_subscription(db=db, channel_id=channel_id, user_id=user.id)
+    return {"message": f"The user has subscribed to the channel"}
 
 
-@router.post("/unsubscribe", status_code=status.HTTP_200_OK)
+@router.delete("/unsubscribe/{channel_id}", status_code=status.HTTP_200_OK)
 async def unsubscribe_channel(
-        channel: Channel = Depends(validate_unsubscript),
+        channel_id: int = Depends(validate_unsubscript),
         user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db_session)
 ):
-    await remove_subscription(db=db, channel_id=channel.id, user_id=user.id)
-    return {"message": f"The user has subscribed to the {channel.tag} channel"}
+    await remove_subscription(db=db, channel_id=channel_id, user_id=user.id)
+    return {"message": f"The user has unsubscribed to the channel"}

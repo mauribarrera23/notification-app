@@ -25,4 +25,15 @@ done
 >&2 echo 'Postgres is available'
 
 alembic upgrade head
+
+while ! curl -sSf "$DEBEZIUM_URL:8083" >/dev/null; do
+    echo "Esperando a que "$DEBEZIUM_URL" esté disponible..."
+    sleep 5
+done
+
+curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" "$DEBEZIUM_URL:8083/connectors/" --data "@debezium.json"
+>&2 echo 'Debezium is available'
+
+sleep 10
+
 uvicorn src.main:app --host 0.0.0.0 --reload

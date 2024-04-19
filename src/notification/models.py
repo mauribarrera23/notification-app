@@ -20,6 +20,8 @@ class Notification(Base):
         'Channel',
         secondary=notification_channel,
         back_populates='notifications',
+        cascade="all, delete",
+        passive_deletes=True,
         lazy="selectin"
     )
     recipient_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=True)

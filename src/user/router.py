@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,7 +8,7 @@ from src.user import service
 from src.user.dependencies import get_current_user, validate_user_creation
 from src.user.exceptions import InvalidCredentials
 from src.user.schemas import Token, UserCreate, UserLogin, UserSchema
-from src.user.service import get_user_by_username
+from src.user.service import get_user_by_username, get_users
 
 router = APIRouter()
 
@@ -29,3 +31,9 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db_session)):
 @router.get("/me", status_code=status.HTTP_200_OK, response_model=UserSchema)
 async def get_user(user=Depends(get_current_user), _: AsyncSession = Depends(get_db_session)):
     return user
+
+
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[UserSchema])
+async def list_users(_=Depends(get_current_user), db: AsyncSession = Depends(get_db_session)):
+    notifications = await get_users(db=db)
+    return notifications

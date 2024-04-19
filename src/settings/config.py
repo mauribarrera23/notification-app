@@ -21,3 +21,7 @@ POSTGRES_HOST: str = __config("POSTGRES_HOST", cast=str)
 POSTGRES_PORT: str = __config("POSTGRES_PORT", cast=str)
 POSTGRES_DB: str = __config("POSTGRES_DB", cast=str)
 DATABASE_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+
+# Kafka
+KAFKA_HOST: str = __config("KAFKA_HOST", cast=str, default="localhost")
+KAFKA_PORT: str = __config("KAFKA_PORT", cast=str, default="29092")

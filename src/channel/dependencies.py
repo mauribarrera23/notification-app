@@ -21,19 +21,19 @@ async def validate_subscription(
         channel_id: int,
         current_user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db_session)
-) -> Channel | HTTPException:
+) -> int | HTTPException:
     channel = await validate_channel(db=db, channel_id=channel_id)
     if channel in current_user.channels:
         raise ChannelSubscriptionExists()
-    return channel
+    return channel.id
 
 
 async def validate_unsubscript(
         channel_id: int,
         current_user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db_session)
-) -> Channel | HTTPException:
+) -> int | HTTPException:
     channel = await validate_channel(db=db, channel_id=channel_id)
     if channel not in current_user.channels:
         raise ChannelSubscriptionDoesntExists()
-    return channel
+    return channel.id
